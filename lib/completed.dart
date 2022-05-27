@@ -289,7 +289,7 @@ class _CompletedState extends State<Completed> {
                                     decoration: BoxDecoration(
                                       color:
                                           const Color.fromARGB(255, 4, 74, 90),
-                                      //color: const Color.fromARGB(255, 62, 151, 224),
+
                                       borderRadius: BorderRadius.circular(2),
                                     ),
                                     padding: const EdgeInsets.symmetric(
