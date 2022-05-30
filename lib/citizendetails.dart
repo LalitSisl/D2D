@@ -30,6 +30,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
   final _noteController = TextEditingController();
   final _transectionController = TextEditingController();
   final _applicationController = TextEditingController();
+  bool isLoactionUpdate = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -108,6 +109,9 @@ class _CitizenDetailsState extends State<CitizenDetails> {
 
   Future<void> update(String tid, String number, String note) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isLoactionUpdate = true;
+    });
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -131,12 +135,21 @@ class _CitizenDetailsState extends State<CitizenDetails> {
             });
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => HomePage(id: "check")));
+            setState(() {
+              isLoactionUpdate = false;
+            });
           } else {
             Fluttertoast.showToast(
                 msg: convertJson['error_msg'], gravity: ToastGravity.BOTTOM);
+            setState(() {
+              isLoactionUpdate = false;
+            });
           }
         } catch (e) {
           print(e.toString());
+          setState(() {
+            isLoactionUpdate = false;
+          });
           // Fluttertoast.showToast(
           //     msg: "Something went wrong, try again later",
           //     gravity: ToastGravity.BOTTOM);
@@ -146,6 +159,9 @@ class _CitizenDetailsState extends State<CitizenDetails> {
       Fluttertoast.showToast(
           msg: "No internet connection. Connect to the internet and try again.",
           gravity: ToastGravity.BOTTOM);
+      setState(() {
+        isLoactionUpdate = false;
+      });
     }
   }
 
@@ -878,6 +894,10 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                     const SizedBox(
                       height: 20,
                     ),
+                    isLoactionUpdate ? Center(child: Container(
+                        height: 30,
+                        width: 30,
+                        child: const CircularProgressIndicator())):
                     Container(
                       width: width,
                       // margin: EdgeInsets.only(left: 30.0, right: 30.0),

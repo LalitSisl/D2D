@@ -244,8 +244,8 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
 
   bool st = true;
   Future<void> started(String asignedid) async {
-    await controller.timerun(asignedid);
-    // await Assigned();
+    //await controller.timerun(asignedid);
+
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -261,6 +261,7 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
             var startdata = convertJson['data'];
+            await controller.timerun(asignedid);
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -278,7 +279,7 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
         } catch (e) {
           print(e.toString());
           Fluttertoast.showToast(
-              msg: "Something went wrong, try again later",
+              msg: "Something went wrong, try again later1",
               gravity: ToastGravity.BOTTOM);
         }
       }

@@ -15,7 +15,6 @@ MERGED from [:battery_info] /Users/lalitsharma/StudioProjects/citizenservices/bu
 MERGED from [:fluttertoast] /Users/lalitsharma/StudioProjects/citizenservices/build/fluttertoast/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:url_launcher_android] /Users/lalitsharma/StudioProjects/citizenservices/build/url_launcher_android/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-14:12
 MERGED from [:android_intent_plus] /Users/lalitsharma/StudioProjects/citizenservices/build/android_intent_plus/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
-MERGED from [:geocoder] /Users/lalitsharma/StudioProjects/citizenservices/build/geocoder/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.window:window-java:1.0.0-beta04] /Users/lalitsharma/.gradle/caches/transforms-2/files-2.1/5e5a24083f00efc9e589d350e291e4c3/jetified-window-java-1.0.0-beta04/AndroidManifest.xml:17:1-23:12
 MERGED from [androidx.window:window:1.0.0-beta04] /Users/lalitsharma/.gradle/caches/transforms-2/files-2.1/dc6da10aeccaa481ab5ff6b77fdceca3/jetified-window-1.0.0-beta04/AndroidManifest.xml:17:1-33:12
 MERGED from [androidx.biometric:biometric:1.1.0] /Users/lalitsharma/.gradle/caches/transforms-2/files-2.1/99061e63eb34080c286431573f77638c/biometric-1.1.0/AndroidManifest.xml:17:1-29:12
@@ -194,8 +193,6 @@ MERGED from [:url_launcher_android] /Users/lalitsharma/StudioProjects/citizenser
 MERGED from [:url_launcher_android] /Users/lalitsharma/StudioProjects/citizenservices/build/url_launcher_android/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:android_intent_plus] /Users/lalitsharma/StudioProjects/citizenservices/build/android_intent_plus/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:android_intent_plus] /Users/lalitsharma/StudioProjects/citizenservices/build/android_intent_plus/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
-MERGED from [:geocoder] /Users/lalitsharma/StudioProjects/citizenservices/build/geocoder/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
-MERGED from [:geocoder] /Users/lalitsharma/StudioProjects/citizenservices/build/geocoder/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [androidx.window:window-java:1.0.0-beta04] /Users/lalitsharma/.gradle/caches/transforms-2/files-2.1/5e5a24083f00efc9e589d350e291e4c3/jetified-window-java-1.0.0-beta04/AndroidManifest.xml:19:5-21:41
 MERGED from [androidx.window:window-java:1.0.0-beta04] /Users/lalitsharma/.gradle/caches/transforms-2/files-2.1/5e5a24083f00efc9e589d350e291e4c3/jetified-window-java-1.0.0-beta04/AndroidManifest.xml:19:5-21:41
 MERGED from [androidx.window:window:1.0.0-beta04] /Users/lalitsharma/.gradle/caches/transforms-2/files-2.1/dc6da10aeccaa481ab5ff6b77fdceca3/jetified-window-1.0.0-beta04/AndroidManifest.xml:20:5-22:41
