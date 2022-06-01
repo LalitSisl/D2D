@@ -145,7 +145,7 @@ class _HomePageState extends State<HomePage>
             appBar: AppBar(
               centerTitle: false,
               backgroundColor: const Color.fromARGB(255, 4, 74, 90),
-              title: const Text('Delhi Door Services',
+              title: const Text('Delhi Door Step Services',
                   style: TextStyle(
                       fontFamily: FFamily.avenir,
                       color: ColorPalette.white,

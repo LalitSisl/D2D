@@ -71,7 +71,11 @@ class _CitizenDetailsState extends State<CitizenDetails> {
           if (convertJson["status"]) {
             setState(() {
               data = convertJson["data"];
-              valuefirst = List<bool>.filled(data["documents"].length, false);
+              print('data $data');
+              if(data['currentstatusid'] == "11"){
+                valuefirst = List<bool>.filled(data["documents"].length, true);
+              }else{
+              valuefirst = List<bool>.filled(data["documents"].length, false);}
             });
 
             // Fluttertoast.showToast(
@@ -109,9 +113,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
 
   Future<void> update(String tid, String number, String note) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isLoactionUpdate = true;
-    });
+
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -130,14 +132,14 @@ class _CitizenDetailsState extends State<CitizenDetails> {
         try {
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
-            setState(() {
-              _prefs.setBool("timer_stop", true);
-            });
-            Navigator.push(context,
+            print('data $convertJson');
+
+            Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => HomePage(id: "check")));
             setState(() {
               isLoactionUpdate = false;
             });
+            controller.stop();
           } else {
             Fluttertoast.showToast(
                 msg: convertJson['error_msg'], gravity: ToastGravity.BOTTOM);
@@ -183,6 +185,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
             var reacheddata = convertJson['data'];
             print('checkboxUpdate $reacheddata');
             print('status ${convertJson['status']}');
+
           } else {
             Fluttertoast.showToast(
                 msg: convertJson['error_msg'], gravity: ToastGravity.BOTTOM);
@@ -237,7 +240,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                   // mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      data["servicename"] ?? "--NA--",
+                        data["servicename"] ?? "--NA--",
                       style: const TextStyle(
                           fontFamily: FFamily.avenir,
                           color: Color.fromARGB(255, 11, 10, 10),
@@ -538,6 +541,13 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                                 children: <Widget>[
                                   Row(
                                     children: <Widget>[
+                                      data['currentstatusid'] == "11" ?
+                                      IgnorePointer(
+                                            child: Checkbox(
+                                              focusNode: noteFocus,
+                                              value: valuefirst[index],
+                                            onChanged: (v){},),
+                                          ):
                                       Checkbox(
                                           focusNode: noteFocus,
                                           value: valuefirst[index],
@@ -548,10 +558,6 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                                               state.didChange(value);
                                               var length =
                                                   data["documents"].length;
-                                              // print(length);
-
-                                              // print(valuefirst[index]);
-
                                               if (valuefirst[index] == true) {
                                                 var count = counter++;
                                                 print('count $counter');
@@ -910,7 +916,10 @@ class _CitizenDetailsState extends State<CitizenDetails> {
 
 
                           if (_formKey.currentState!.validate()) {
-                            controller.stop();
+
+                            setState(() {
+                              isLoactionUpdate = true;
+                            });
                             update(
                                 _transectionController.text,
                                 _applicationController.text,

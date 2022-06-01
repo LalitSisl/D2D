@@ -25,6 +25,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+
 class Assigned extends StatefulWidget {
   const Assigned({Key? key}) : super(key: key);
 
@@ -32,8 +33,8 @@ class Assigned extends StatefulWidget {
   _AssignedState createState() => _AssignedState();
 }
 
-class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin{
-
+class _AssignedState extends State<Assigned>
+    with SingleTickerProviderStateMixin {
   final TimeController controller = Get.put(TimeController());
   final _formKey = GlobalKey<FormState>();
   //final _controller = TextEditingController();
@@ -131,27 +132,8 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
     }
   }
 
-  // void deviceinfo_location() async {
-  //   setState(() {
-  //     getLocation();
-  //     //deviseInfo();
-  //   });
-  // }
-
   var bettery;
-  // void deviseInfo() async {
-  //   print(
-  //       "Battery Health: ${(await BatteryInfoPlugin().androidBatteryInfo)?.batteryLevel}");
-  //   setState(() async {
-  //     bettery = (await BatteryInfoPlugin().androidBatteryInfo)?.batteryLevel;
-  //   });
-  // }
 
-  // @override
-  // void dispose() {
-  //   timer?.cancel();
-  //   super.dispose();
-  // }
 
   getLocation() async {
     bool serviceEnabled;
@@ -261,7 +243,7 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
             var startdata = convertJson['data'];
-            await controller.timerun(asignedid);
+            controller.timerun(asignedid);
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -355,14 +337,16 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
                           print(data[index]['status_id']);
 
                           if (data[index]['status_id'] == "1" ||
-                              data[index]['status_id'] == "2") {
+                              data[index]['status_id'] == "2" ||
+                              data[index]['status_id'] == "12") {
                             btnText = "START";
                           } else if (data[index]['status_id'] == "3") {
                             btnText = "REACHED";
                           } else if (data[index]['status_id'] == "4") {
                             btnText = "Collect Doc.";
+                          } else if (data[index]['status_id'] == "11") {
+                            btnText = "Complete";
                           }
-
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Card(
@@ -375,8 +359,7 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
                                     Container(
                                       decoration: BoxDecoration(
                                         color: Colors.grey.shade100,
-                                        borderRadius:
-                                            BorderRadius.circular(5),
+                                        borderRadius: BorderRadius.circular(5),
                                       ),
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 10),
@@ -446,9 +429,9 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
                                             margin: const EdgeInsets.only(
                                                 bottom: 5),
                                             child: Padding(
-                                                padding: const EdgeInsets
-                                                        .symmetric(
-                                                    horizontal: 10),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10),
                                                 child: Row(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -457,9 +440,8 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
                                                       const Text(
                                                         'Alternate No.',
                                                         style: TextStyle(
-                                                            color:
-                                                                ColorPalette
-                                                                    .textGrey,
+                                                            color: ColorPalette
+                                                                .textGrey,
                                                             fontSize:
                                                                 FSize.dp12,
                                                             letterSpacing: 0,
@@ -473,8 +455,8 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
                                                           child: Text(
                                                         '${data[index]['alternate_mobile']}',
                                                         style: const TextStyle(
-                                                            color: Color
-                                                                .fromARGB(
+                                                            color:
+                                                                Color.fromARGB(
                                                                     255,
                                                                     12,
                                                                     67,
@@ -482,9 +464,8 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
                                                             fontSize:
                                                                 FSize.dp14,
                                                             letterSpacing: 0,
-                                                            fontWeight:
-                                                                FWeight
-                                                                    .regular),
+                                                            fontWeight: FWeight
+                                                                .regular),
                                                       )),
                                                     ])),
                                           )
@@ -568,7 +549,6 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
                                         children: [
                                           GestureDetector(
                                             onTap: () async {
-
                                               String url = Platform.isIOS
                                                   ? 'tel://${data[index]['mobile']}'
                                                   : 'tel:${data[index]['mobile']}';
@@ -638,8 +618,8 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
                                                     BorderRadius.circular(8),
                                               ),
                                               child: const Image(
-                                                image: AssetImage(
-                                                    ImageAssets.map),
+                                                image:
+                                                    AssetImage(ImageAssets.map),
                                                 height: 24,
                                               ),
                                             ),
@@ -666,10 +646,13 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
                                               //   });
                                               // }
 
-                                              if (data[index]['status_id'] ==
+                                              if (data[index]
+                                                          ['status_id'] ==
                                                       "1" ||
                                                   data[index]['status_id'] ==
-                                                      "2") {
+                                                      "2" ||
+                                                  data[index]['status_id'] ==
+                                                      "12") {
                                                 var id = data[index]["id"];
                                                 started(id);
                                               } else if (data[index]
@@ -678,8 +661,10 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
                                                 var id = data[index]["id"];
                                                 Reached(id);
                                               } else if (data[index]
-                                                      ['status_id'] ==
-                                                  "4") {
+                                                          ['status_id'] ==
+                                                      "4" ||
+                                                  data[index]['status_id'] ==
+                                                      "11") {
                                                 var id = data[index]["id"];
                                                 Navigator.of(context).push(
                                                     MaterialPageRoute(
@@ -704,18 +689,17 @@ class _AssignedState extends State<Assigned> with SingleTickerProviderStateMixin
                                               // }
                                             },
                                             child: Container(
-                                                padding: const EdgeInsets
-                                                        .symmetric(
-                                                    vertical: 4.5,
-                                                    horizontal: 5),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4.5,
+                                                        horizontal: 5),
                                                 width: 120,
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
                                                       color: Colors.black87,
                                                       width: 1.2),
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          8),
+                                                      BorderRadius.circular(8),
                                                 ),
                                                 child: Row(
                                                   mainAxisAlignment:
