@@ -45,6 +45,7 @@ dependencies:
 
 
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -64,6 +65,8 @@ dev_dependencies:
   shared_preferences: ^2.0.15
   battery_info: ^1.1.1
   get: ^4.6.5
+  flutter_switch: ^0.3.2
+
   
 
 # For information on the generic Dart part of this file, see the

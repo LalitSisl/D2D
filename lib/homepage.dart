@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage>
     // TODO: implement initState
     super.initState();
     mainmethod();
-    checkbio();
+    //checkbio();
     method();
     _tabController = TabController(length: 2, vsync: this);
     _tabController!.addListener(_handleTabSelection);
@@ -52,11 +52,14 @@ class _HomePageState extends State<HomePage>
   }
 
   var name;
+  var name1;
   var email;
   mainmethod() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       name = sharedPreferences.getString("name");
+      String capitalize(name) => name[0].toUpperCase();
+      name1 = capitalize(name);
       email = sharedPreferences.getString("email");
     });
   }
@@ -143,14 +146,20 @@ class _HomePageState extends State<HomePage>
         child: Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
-              centerTitle: false,
+              leading: Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.menu_rounded,size: 22,),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                ),
+              ),
+              titleSpacing: 0,
               backgroundColor: const Color.fromARGB(255, 4, 74, 90),
-              title: const Text('Delhi Door Step Services',
+              title: const Text('Delhi Doorstep Services',
                   style: TextStyle(
                       fontFamily: FFamily.avenir,
                       color: ColorPalette.white,
                       fontSize: FSize.dp16,
-                      letterSpacing: 1,
+                      letterSpacing: 0.5,
                       fontWeight: FWeight.semiBold)),
             ),
             drawer: Drawer(
@@ -161,31 +170,47 @@ class _HomePageState extends State<HomePage>
                   padding: EdgeInsets.zero,
                   children: <Widget>[
                     UserAccountsDrawerHeader(
+                      decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 4, 74, 90),
+                      ),
                       accountName: Text(name ?? "User"),
                       accountEmail: Text(email ?? "user@gmail.com"),
-                      currentAccountPicture: const CircleAvatar(
+                      currentAccountPicture: CircleAvatar(
+
                         backgroundColor: Colors.orange,
                         child: Text(
-                          "D2D",
-                          style: TextStyle(
-                              fontSize: 22.0,
+                          "$name1",
+                          style: const TextStyle(
+                              fontSize: 28.0,
                               fontWeight: FontWeight.w600,
                               color: Colors.white),
                         ),
                       ),
                     ),
-                    ListTile(
-                      leading: const Icon(
-                        Icons.logout,
-                        size: 20,
-                      ),
-                      title: const Text("Logout"),
-                      onTap: () {
+
+                    GestureDetector(
+                      onTap: (){
                         clearPref();
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                             builder: (BuildContext context) => LoginPage()));
                       },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 8),
+                        child: Row(
+                          children: const [
+                             Icon(
+                              Icons.logout,
+                              size: 18,
+                            ),
+                              SizedBox(width: 12,),
+                            Text("Logout",style: TextStyle(
+                              fontSize: 15
+                            ),),
+                          ],
+                        ),
+                      ),
                     ),
+
                   ],
                 ),
               ),

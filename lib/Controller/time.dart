@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'dart:io';
+
 import 'package:battery_info/battery_info_plugin.dart';
 import 'package:citizenservices/network/api.dart';
+import 'package:geocoding/geocoding.dart';
 
 
 import 'package:geolocator/geolocator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
@@ -17,8 +20,32 @@ class TimeController extends GetxController {
   void onInit() {
     super.onInit();
     method();
+
     getLocation(); // prints 1
   }
+
+  // List<Map<String, double>> arrey = [
+  //   {
+  //     'lat': 28.5290,
+  //     'long': 77.2050,
+  //   },
+  //   {
+  //     'lat': 28.5479,
+  //     'long': 77.2031,
+  //   },
+  //   {
+  //     'lat': 28.6330,
+  //     'long': 77.2194,
+  //   },
+  //   {
+  //     'lat': 28.5332,
+  //     'long': 77.2042,
+  //   },
+  //   {
+  //     'lat': 28.5649,
+  //     'long': 77.2403,
+  //   }
+  // ];
 
   var id;
   var email;
@@ -42,12 +69,17 @@ class TimeController extends GetxController {
 
   var lat;
   var long;
-
+  var value;
   Future<void> userInfo(String srID) async {
     getLocation();
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        // var rng = Random();
+        // for (var i = 0; i < 1; i++) {
+        //   //print(rng.nextInt(5));
+        //    value = rng.nextInt(5);
+        // }
         var body = jsonEncode(<String, String>{
           "userid": "$id",
           "lat": "$lat",
@@ -57,6 +89,7 @@ class TimeController extends GetxController {
           "mobile": "$mobile",
           "name": "$name"
         });
+        print(body);
         var response =
             await http.post(Uri.parse("${API.USER_INFO}"), body: body);
         try {
@@ -117,4 +150,5 @@ class TimeController extends GetxController {
   stop() {
     timer!.cancel();
   }
+
 }

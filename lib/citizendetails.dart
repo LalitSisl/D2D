@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:citizenservices/homepage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Controller/time.dart';
 import 'constants.dart';
 import 'network/api.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
@@ -21,6 +23,7 @@ class CitizenDetails extends StatefulWidget {
 }
 
 class _CitizenDetailsState extends State<CitizenDetails> {
+  bool _switchValue=false;
   final TimeController controller = Get.put(TimeController());
   Timer? timer;
   var _len;
@@ -72,10 +75,11 @@ class _CitizenDetailsState extends State<CitizenDetails> {
             setState(() {
               data = convertJson["data"];
               print('data $data');
-              if(data['currentstatusid'] == "11"){
+              if (data['currentstatusid'] == "11") {
                 valuefirst = List<bool>.filled(data["documents"].length, true);
-              }else{
-              valuefirst = List<bool>.filled(data["documents"].length, false);}
+              } else {
+                valuefirst = List<bool>.filled(data["documents"].length, false);
+              }
             });
 
             // Fluttertoast.showToast(
@@ -182,25 +186,35 @@ class _CitizenDetailsState extends State<CitizenDetails> {
         try {
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
-            var reacheddata = convertJson['data'];
-            print('checkboxUpdate $reacheddata');
-            print('status ${convertJson['status']}');
-
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => HomePage(id: "check")));
+            setState(() {
+              isLoactionUpdate = false;
+            });
           } else {
             Fluttertoast.showToast(
                 msg: convertJson['error_msg'], gravity: ToastGravity.BOTTOM);
+            setState(() {
+              isLoactionUpdate = false;
+            });
           }
         } catch (e) {
           print(e.toString());
           Fluttertoast.showToast(
               msg: "Something went wrong, try again later",
               gravity: ToastGravity.BOTTOM);
+          setState(() {
+            isLoactionUpdate = false;
+          });
         }
       }
     } on SocketException catch (_) {
       Fluttertoast.showToast(
           msg: "No internet connection. Connect to the internet and try again.",
           gravity: ToastGravity.BOTTOM);
+      setState(() {
+        isLoactionUpdate = false;
+      });
     }
   }
 
@@ -240,7 +254,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                   // mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                        data["servicename"] ?? "--NA--",
+                      data["servicename"] ?? "--NA--",
                       style: const TextStyle(
                           fontFamily: FFamily.avenir,
                           color: Color.fromARGB(255, 11, 10, 10),
@@ -516,86 +530,6 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                     const SizedBox(
                       height: 10,
                     ),
-                    const Text(
-                      "Document to be collected:",
-                      style: TextStyle(
-                          fontFamily: FFamily.avenir,
-                          color: Color.fromARGB(255, 11, 10, 10),
-                          fontSize: FSize.dp14,
-                          fontWeight: FWeight.semiBold),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: data["documents"] != null &&
-                                data["documents"].isNotEmpty
-                            ? data["documents"].length
-                            : 0,
-                        itemBuilder: (context, index) {
-                          return FormField<bool>(
-                            builder: (state) {
-                              return Column(
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      data['currentstatusid'] == "11" ?
-                                      IgnorePointer(
-                                            child: Checkbox(
-                                              focusNode: noteFocus,
-                                              value: valuefirst[index],
-                                            onChanged: (v){},),
-                                          ):
-                                      Checkbox(
-                                          focusNode: noteFocus,
-                                          value: valuefirst[index],
-                                          onChanged: (value) {
-                                            setState(() {
-//save checkbox value to variable that store terms and notify form that state changed
-                                              valuefirst[index] = value!;
-                                              state.didChange(value);
-                                              var length =
-                                                  data["documents"].length;
-                                              if (valuefirst[index] == true) {
-                                                var count = counter++;
-                                                print('count $counter');
-                                              }
-                                              if (counter == length) {
-                                                checkboxUpdate();
-                                              }
-                                            });
-                                          }),
-                                      Flexible(
-                                          child: Text(data["documents"][index]
-                                              ["name"])),
-                                    ],
-                                  ),
-//display error in matching theme
-                                  Text(
-                                    state.errorText ?? '',
-                                    style: TextStyle(
-                                      color: Theme.of(context).errorColor,
-                                    ),
-                                  )
-                                ],
-                              );
-                            },
-//output from validation will be displayed in state.errorText (above)
-                            validator: (value) {
-                              if (!valuefirst[index]) {
-                                noteFocus.requestFocus();
-                                return 'Please check your documents';
-                              } else {
-                                return null;
-                              }
-                            },
-                          );
-                        }),
-                    const SizedBox(
-                      height: 10,
-                    ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -712,7 +646,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                               Text(
                                 data["fees"],
                                 style:
-                                    EWTWidget.subminsubnormalHeadingsTextStyle,
+                                EWTWidget.subminsubnormalHeadingsTextStyle,
                               ),
                               const SizedBox(
                                 height: 5,
@@ -720,7 +654,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                               Text(
                                 data["servicefees"],
                                 style:
-                                    EWTWidget.subminsubnormalHeadingsTextStyle,
+                                EWTWidget.subminsubnormalHeadingsTextStyle,
                               ),
                               const SizedBox(
                                 height: 5,
@@ -728,7 +662,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                               Text(
                                 data["tax"],
                                 style:
-                                    EWTWidget.subminsubnormalHeadingsTextStyle,
+                                EWTWidget.subminsubnormalHeadingsTextStyle,
                               ),
                             ],
                           ),
@@ -757,184 +691,305 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          'Transaction Id:',
-                          style: EWTWidget.subHeadingTextStyle,
-                        ),
-                        const SizedBox(
-                          width: 70,
-                        ),
-                        Flexible(
-                          child: Container(
-                            padding: EdgeInsets.only(bottom: 10),
-                            child: TextFormField(
-                              autofocus: false,
-                              controller: _transectionController,
-                              decoration: const InputDecoration(
-                                isDense: true,
-
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(0.0, 10.0, 20.0, 10.0),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: ColorPalette.textGrey),
-                                  //  when the TextFormField in unfocused
-                                ),
-                                // hintStyle: TextStyle(fontSize: 14),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: ColorPalette.textGrey),
-                                  //  when the TextFormField in unfocused
-                                ),
-                                border: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: ColorPalette.textGrey),
-                                ),
-                                //labelStyle: EWTWidget.fieldLabelTextStyle,
-                              ),
-                              keyboardType: TextInputType.text,
-                              style: EWTWidget.fieldValueTextStyle,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'The field is mandatory';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 10,),
+                    const Text(
+                      "Document to be collected:",
+                      style: TextStyle(
+                          fontFamily: FFamily.avenir,
+                          color: Color.fromARGB(255, 11, 10, 10),
+                          fontSize: FSize.dp14,
+                          fontWeight: FWeight.semiBold),
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          'Application Number:',
-                          style: EWTWidget.subHeadingTextStyle,
-                        ),
-                        const SizedBox(
-                          width: 37,
-                        ),
-                        Flexible(
-                          child: Container(
-                            padding: EdgeInsets.only(bottom: 10),
-                            child: TextFormField(
-                              autofocus: false,
-                              controller: _applicationController,
-                              decoration: const InputDecoration(
-                                isDense: true,
-
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(0.0, 10.0, 20.0, 10.0),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: ColorPalette.textGrey),
-                                  //  when the TextFormField in unfocused
-                                ),
-                                // hintStyle: TextStyle(fontSize: 14),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: ColorPalette.textGrey),
-                                  //  when the TextFormField in unfocused
-                                ),
-                                border: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: ColorPalette.textGrey),
-                                ),
-                                //labelStyle: EWTWidget.fieldLabelTextStyle,
-                              ),
-                              keyboardType: TextInputType.text,
-                              style: EWTWidget.fieldValueTextStyle,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'The field is mandatory';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
+                    const SizedBox(
+                      height: 5,
                     ),
-                    Row(children: [
-                      Text(
-                        'Notes:',
-                        style: EWTWidget.subHeadingTextStyle,
-                      ),
-                      const SizedBox(
-                        width: 115,
-                      ),
-                      Flexible(
-                        child: TextFormField(
-                          autofocus: false,
-                          controller: _noteController,
-                          decoration: const InputDecoration(
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: ColorPalette.textGrey),
-                              //  when the TextFormField in unfocused
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: ColorPalette.textGrey),
-                              //  when the TextFormField in unfocused
-                            ),
-                            border: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: ColorPalette.textGrey),
-                            ),
-                            //labelStyle: EWTWidget.fieldLabelTextStyle,
-                          ),
-                          keyboardType: TextInputType.text,
-                          style: EWTWidget.fieldValueTextStyle,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'The field is mandatory';
-                            }
-                            return null;
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: data["documents"] != null &&
+                                data["documents"].isNotEmpty
+                            ? data["documents"].length
+                            : 0,
+                        itemBuilder: (context, index) {
+                          return FormField<bool>(
+                            builder: (state) {
+                              return Column(
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      data['currentstatusid'] == "11"
+                                          ? IgnorePointer(
+                                              child: Checkbox(
+                                                focusNode: noteFocus,
+                                                value: valuefirst[index],
+                                                onChanged: (v) {},
+                                              ),
+                                            )
+                                          : Checkbox(
+                                              focusNode: noteFocus,
+                                              value: valuefirst[index],
+                                              onChanged: (value) {
+                                                setState(() {
+
+                                                  valuefirst[index] = value!;
+                                                  // state.didChange(value);
+                                                  // var length =
+                                                  //     data["documents"].length;
+                                                  // if (valuefirst[index] ==
+                                                  //     true) {
+                                                  //   var count = counter++;
+                                                  //   print('count $counter');
+                                                  // }
+                                                  // if (counter == length) {
+                                                  //   checkboxUpdate();
+                                                  // }
+                                                });
+                                              }),
+                                      Flexible(
+                                          child: Text(data["documents"][index]
+                                              ["name"])),
+                                    ],
+                                  ),
+//display error in matching theme
+                                  Text(
+                                    state.errorText ?? '',
+                                    style: TextStyle(
+                                      color: Theme.of(context).errorColor,
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+//output from validation will be displayed in state.errorText (above)
+                            validator: (value) {
+                              if (!valuefirst[index]) {
+                                noteFocus.requestFocus();
+                                return 'Please check your documents';
+                              } else {
+                                return null;
+                              }
+                            },
+                          );
+                        }),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+
+                        const Flexible(child:  Text('Have you already '
+                            'Registered Application on E-District portal?')),
+                        FlutterSwitch(
+                          height: 20.0,
+                          width: 40.0,
+                          padding: 4.0,
+                          toggleSize: 15.0,
+                          borderRadius: 10.0,
+                          //activeColor: lets_cyan,
+                          value: _switchValue,
+                          onToggle: (value) {
+                            setState(() {
+                              _switchValue = value;
+                            });
                           },
                         ),
-                      ),
-                    ]),
+                      ],
+                    ),
+                    //const SizedBox(height: 10),
+                    _switchValue == true ?
+                   Column(
+                     children: [
+                       Row(
+                         children: [
+                           Text(
+                             'Transaction Id:',
+                             style: EWTWidget.subHeadingTextStyle,
+                           ),
+                           const SizedBox(
+                             width: 70,
+                           ),
+                           Flexible(
+                             child: Container(
+                               padding: EdgeInsets.only(bottom: 10),
+                               child: TextFormField(
+                                 autofocus: false,
+                                 controller: _transectionController,
+                                 decoration: const InputDecoration(
+                                   isDense: true,
+
+                                   contentPadding:
+                                   EdgeInsets.fromLTRB(0.0, 10.0, 20.0, 10.0),
+                                   focusedBorder: UnderlineInputBorder(
+                                     borderSide:
+                                     BorderSide(color: ColorPalette.textGrey),
+                                     //  when the TextFormField in unfocused
+                                   ),
+                                   // hintStyle: TextStyle(fontSize: 14),
+                                   enabledBorder: UnderlineInputBorder(
+                                     borderSide:
+                                     BorderSide(color: ColorPalette.textGrey),
+                                     //  when the TextFormField in unfocused
+                                   ),
+                                   border: UnderlineInputBorder(
+                                     borderSide:
+                                     BorderSide(color: ColorPalette.textGrey),
+                                   ),
+                                   //labelStyle: EWTWidget.fieldLabelTextStyle,
+                                 ),
+                                 // inputFormatters: [
+                                 //   FilteringTextInputFormatter.deny(RegExp(
+                                 //       r'!@#<>?":_``~;[]\|=-+)(*&^%1234567890')),
+                                 // ],
+                                 keyboardType: TextInputType.text,
+                                 style: EWTWidget.fieldValueTextStyle,
+                                 validator: (value) {
+                                   if (value!.isEmpty) {
+                                     return 'The field is mandatory';
+                                   } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                                       .hasMatch(value)) {
+                                     return 'Enter valid id';
+                                   }
+                                   return null;
+                                 },
+                               ),
+                             ),
+                           ),
+                         ],
+                       ),
+                       Row(
+                         children: [
+                           Text(
+                             'Application Number:',
+                             style: EWTWidget.subHeadingTextStyle,
+                           ),
+                           const SizedBox(
+                             width: 33,
+                           ),
+                           Flexible(
+                             child: Container(
+                               padding: EdgeInsets.only(bottom: 10),
+                               child: TextFormField(
+                                 autofocus: false,
+                                 controller: _applicationController,
+                                 decoration: const InputDecoration(
+                                   isDense: true,
+
+                                   contentPadding:
+                                   EdgeInsets.fromLTRB(0.0, 10.0, 20.0, 10.0),
+                                   focusedBorder: UnderlineInputBorder(
+                                     borderSide:
+                                     BorderSide(color: ColorPalette.textGrey),
+                                     //  when the TextFormField in unfocused
+                                   ),
+                                   // hintStyle: TextStyle(fontSize: 14),
+                                   enabledBorder: UnderlineInputBorder(
+                                     borderSide:
+                                     BorderSide(color: ColorPalette.textGrey),
+                                     //  when the TextFormField in unfocused
+                                   ),
+                                   border: UnderlineInputBorder(
+                                     borderSide:
+                                     BorderSide(color: ColorPalette.textGrey),
+                                   ),
+                                   //labelStyle: EWTWidget.fieldLabelTextStyle,
+                                 ),
+                                 keyboardType: TextInputType.text,
+                                 style: EWTWidget.fieldValueTextStyle,
+                                 validator: (value) {
+                                   if (value!.isEmpty) {
+                                     return 'The field is mandatory';
+                                   } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                                       .hasMatch(value)) {
+                                     return 'Enter valid Number';
+                                   }
+                                   return null;
+                                 },
+                               ),
+                             ),
+                           ),
+                         ],
+                       ),
+                       Row(children: [
+                         Text(
+                           'Notes:',
+                           style: EWTWidget.subHeadingTextStyle,
+                         ),
+                         const SizedBox(
+                           width: 120,
+                         ),
+                         Flexible(
+                           child: TextFormField(
+                             autofocus: false,
+                             controller: _noteController,
+                             decoration: const InputDecoration(
+                               focusedBorder: UnderlineInputBorder(
+                                 borderSide:
+                                 BorderSide(color: ColorPalette.textGrey),
+                                 //  when the TextFormField in unfocused
+                               ),
+                               enabledBorder: UnderlineInputBorder(
+                                 borderSide:
+                                 BorderSide(color: ColorPalette.textGrey),
+                                 //  when the TextFormField in unfocused
+                               ),
+                               border: UnderlineInputBorder(
+                                 borderSide:
+                                 BorderSide(color: ColorPalette.textGrey),
+                               ),
+                               //labelStyle: EWTWidget.fieldLabelTextStyle,
+                             ),
+                             keyboardType: TextInputType.text,
+                             style: EWTWidget.fieldValueTextStyle,
+                             validator: (value) {
+                               if (value!.isEmpty) {
+                                 return 'The field is mandatory';
+                               }
+                               return null;
+                             },
+                           ),
+                         ),
+                       ]),
+                     ],
+                   ):Container(),
                     const SizedBox(
                       height: 20,
                     ),
-                    isLoactionUpdate ? Center(child: Container(
-                        height: 30,
-                        width: 30,
-                        child: const CircularProgressIndicator())):
-                    Container(
-                      width: width,
-                      // margin: EdgeInsets.only(left: 30.0, right: 30.0),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(Dimension.dp8),
-                          color: const Color.fromARGB(255, 86, 91, 92)),
-                      child: RawMaterialButton(
-                        elevation: Dimension.dp00,
-                        onPressed: () async {
-
-
-                          if (_formKey.currentState!.validate()) {
-
-                            setState(() {
-                              isLoactionUpdate = true;
-                            });
-                            update(
-                                _transectionController.text,
-                                _applicationController.text,
-                                _noteController.text);
-                          } else {}
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(Dimension.dp10),
-                          child: Text(
-                            'SUBMIT',
-                            style: EWTWidget.buttonTextStyle,
+                    isLoactionUpdate
+                        ? Center(
+                            child: Container(
+                                height: 30,
+                                width: 30,
+                                child: const CircularProgressIndicator()))
+                        : Container(
+                            width: width,
+                            // margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(Dimension.dp8),
+                                color: const Color.fromARGB(255, 86, 91, 92)),
+                            child: RawMaterialButton(
+                              elevation: Dimension.dp00,
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    isLoactionUpdate = true;
+                                  });
+                                  _switchValue == true ?
+                                  update(
+                                      _transectionController.text,
+                                      _applicationController.text,
+                                      _noteController.text):checkboxUpdate();
+                                } else {}
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(Dimension.dp10),
+                                child: Text(
+                                  'SUBMIT',
+                                  style: EWTWidget.buttonTextStyle,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                     const SizedBox(
                       height: 20,
                     ),

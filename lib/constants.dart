@@ -144,6 +144,7 @@ class ImageAssets {
   static const splash = "assets/images/splash1.png";
   static const cs = "assets/images/cs.png";
   static const map = "assets/images/map.png";
+  static const map1 = "assets/images/map1.png";
 }
 
 class FWeight {

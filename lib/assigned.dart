@@ -619,7 +619,8 @@ class _AssignedState extends State<Assigned>
                                               ),
                                               child: const Image(
                                                 image:
-                                                    AssetImage(ImageAssets.map),
+                                                    AssetImage(ImageAssets.map1),
+                                                color: Colors.grey,
                                                 height: 24,
                                               ),
                                             ),
@@ -654,6 +655,7 @@ class _AssignedState extends State<Assigned>
                                                   data[index]['status_id'] ==
                                                       "12") {
                                                 var id = data[index]["id"];
+
                                                 started(id);
                                               } else if (data[index]
                                                       ['status_id'] ==

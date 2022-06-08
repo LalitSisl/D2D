@@ -172,11 +172,8 @@ class _LoginPageState extends State<LoginPage> {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      isLoading
-                          ? const Center(
-                              child: CircularProgressIndicator(),
-                            )
-                          : Container(),
+
+
                       const SizedBox(
                         height: 100,
                       ),
@@ -277,10 +274,20 @@ class _LoginPageState extends State<LoginPage> {
                                     borderRadius:
                                         BorderRadius.circular(Dimension.dp8),
                                     color:
-                                        const Color.fromARGB(255, 86, 91, 92)),
-                                child: RawMaterialButton(
+                                         const Color(0xFF2f5ba3),
+                                ),
+                                child:
+                                isLoading
+                                    ?  const Center(
+                                  child: SizedBox(
+                                      height: 25,
+                                      width: 25,
+                                      child: CircularProgressIndicator(color: Colors.white,)),
+                                ):
+                                RawMaterialButton(
                                   elevation: Dimension.dp00,
                                   onPressed: () {
+
                                     // Navigator.of(context).pushReplacement(
                                     //     MaterialPageRoute(
                                     //         builder: (BuildContext context) =>
