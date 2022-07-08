@@ -2,18 +2,24 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:citizenservices/homepage.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Controller/time.dart';
 import 'constants.dart';
 import 'network/api.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+
 class CitizenDetails extends StatefulWidget {
   String id;
   CitizenDetails({Key? key, required this.id}) : super(key: key);
@@ -23,7 +29,7 @@ class CitizenDetails extends StatefulWidget {
 }
 
 class _CitizenDetailsState extends State<CitizenDetails> {
-  bool _switchValue=false;
+  bool _switchValue = false;
   final TimeController controller = Get.put(TimeController());
   Timer? timer;
   var _len;
@@ -76,6 +82,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
               data = convertJson["data"];
               print('data $data');
               if (data['currentstatusid'] == "11") {
+                _switchValue = true;
                 valuefirst = List<bool>.filled(data["documents"].length, true);
               } else {
                 valuefirst = List<bool>.filled(data["documents"].length, false);
@@ -218,6 +225,62 @@ class _CitizenDetailsState extends State<CitizenDetails> {
     }
   }
 
+  File? Hotelfile;
+
+  Future<void> uploadImage(file) async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        var request =
+            http.MultipartRequest('POST', Uri.parse("${API.UPLOAD_IMAGE}"));
+        request.files
+            .add(await http.MultipartFile.fromPath('image_name', file));
+        request.fields['user_id'] = id;
+        request.fields['mobile'] = '$mobile';
+        request.fields['srid'] = '${widget.id}';
+        print(id);
+        print(mobile);
+        print(widget.id);
+
+        var res = await request.send();
+
+        try {
+          if (res.statusCode == 200) {
+            var responseBody = await http.Response.fromStream(res);
+            var myData = json.decode(responseBody.body);
+            print('data ${myData['data']}');
+            print('data is ok');
+
+            setState(() {
+              isLoactionUpdate = false;
+            });
+          } else {
+            // Fluttertoast.showToast(
+            //     msg: convertJson['error_msg'], gravity: ToastGravity.BOTTOM);
+            setState(() {
+              isLoactionUpdate = false;
+            });
+          }
+        } catch (e) {
+          print(e.toString());
+          Fluttertoast.showToast(
+              msg: "Something went wrong, try again later",
+              gravity: ToastGravity.BOTTOM);
+          setState(() {
+            isLoactionUpdate = false;
+          });
+        }
+      }
+    } on SocketException catch (_) {
+      Fluttertoast.showToast(
+          msg: "No internet connection. Connect to the internet and try again.",
+          gravity: ToastGravity.BOTTOM);
+      setState(() {
+        isLoactionUpdate = false;
+      });
+    }
+  }
+
   var counter = 0;
   @override
   Widget build(BuildContext context) {
@@ -254,7 +317,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                   // mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      data["servicename"] ?? "--NA--",
+                      "${data["servicename"]}",
                       style: const TextStyle(
                           fontFamily: FFamily.avenir,
                           color: Color.fromARGB(255, 11, 10, 10),
@@ -646,7 +709,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                               Text(
                                 data["fees"],
                                 style:
-                                EWTWidget.subminsubnormalHeadingsTextStyle,
+                                    EWTWidget.subminsubnormalHeadingsTextStyle,
                               ),
                               const SizedBox(
                                 height: 5,
@@ -654,7 +717,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                               Text(
                                 data["servicefees"],
                                 style:
-                                EWTWidget.subminsubnormalHeadingsTextStyle,
+                                    EWTWidget.subminsubnormalHeadingsTextStyle,
                               ),
                               const SizedBox(
                                 height: 5,
@@ -662,7 +725,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                               Text(
                                 data["tax"],
                                 style:
-                                EWTWidget.subminsubnormalHeadingsTextStyle,
+                                    EWTWidget.subminsubnormalHeadingsTextStyle,
                               ),
                             ],
                           ),
@@ -691,7 +754,9 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     const Text(
                       "Document to be collected:",
                       style: TextStyle(
@@ -730,7 +795,6 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                                               value: valuefirst[index],
                                               onChanged: (value) {
                                                 setState(() {
-
                                                   valuefirst[index] = value!;
                                                   // state.didChange(value);
                                                   // var length =
@@ -774,11 +838,12 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-
-                        const Flexible(child:  Text('Have you already '
-                            'Registered Application on E-District portal?')),
+                        const Flexible(
+                            child: Text('Have you already '
+                                'Registered Application on E-District portal?')),
                         FlutterSwitch(
                           height: 20.0,
                           width: 40.0,
@@ -796,161 +861,251 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                       ],
                     ),
                     //const SizedBox(height: 10),
-                    _switchValue == true ?
-                   Column(
-                     children: [
-                       Row(
-                         children: [
-                           Text(
-                             'Transaction Id:',
-                             style: EWTWidget.subHeadingTextStyle,
-                           ),
-                           const SizedBox(
-                             width: 70,
-                           ),
-                           Flexible(
-                             child: Container(
-                               padding: EdgeInsets.only(bottom: 10),
-                               child: TextFormField(
-                                 autofocus: false,
-                                 controller: _transectionController,
-                                 decoration: const InputDecoration(
-                                   isDense: true,
+                    _switchValue == true
+                        ? Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Transaction Id:',
+                                    style: EWTWidget.subHeadingTextStyle,
+                                  ),
+                                  const SizedBox(
+                                    width: 70,
+                                  ),
+                                  Flexible(
+                                    child: Container(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                      child: TextFormField(
+                                        autofocus: false,
+                                        controller: _transectionController,
+                                        decoration: const InputDecoration(
+                                          isDense: true,
 
-                                   contentPadding:
-                                   EdgeInsets.fromLTRB(0.0, 10.0, 20.0, 10.0),
-                                   focusedBorder: UnderlineInputBorder(
-                                     borderSide:
-                                     BorderSide(color: ColorPalette.textGrey),
-                                     //  when the TextFormField in unfocused
-                                   ),
-                                   // hintStyle: TextStyle(fontSize: 14),
-                                   enabledBorder: UnderlineInputBorder(
-                                     borderSide:
-                                     BorderSide(color: ColorPalette.textGrey),
-                                     //  when the TextFormField in unfocused
-                                   ),
-                                   border: UnderlineInputBorder(
-                                     borderSide:
-                                     BorderSide(color: ColorPalette.textGrey),
-                                   ),
-                                   //labelStyle: EWTWidget.fieldLabelTextStyle,
-                                 ),
-                                 // inputFormatters: [
-                                 //   FilteringTextInputFormatter.deny(RegExp(
-                                 //       r'!@#<>?":_``~;[]\|=-+)(*&^%1234567890')),
-                                 // ],
-                                 keyboardType: TextInputType.text,
-                                 style: EWTWidget.fieldValueTextStyle,
-                                 validator: (value) {
-                                   if (value!.isEmpty) {
-                                     return 'The field is mandatory';
-                                   } else if (!RegExp(r'^[a-zA-Z0-9]+$')
-                                       .hasMatch(value)) {
-                                     return 'Enter valid id';
-                                   }
-                                   return null;
-                                 },
-                               ),
-                             ),
-                           ),
-                         ],
-                       ),
-                       Row(
-                         children: [
-                           Text(
-                             'Application Number:',
-                             style: EWTWidget.subHeadingTextStyle,
-                           ),
-                           const SizedBox(
-                             width: 33,
-                           ),
-                           Flexible(
-                             child: Container(
-                               padding: EdgeInsets.only(bottom: 10),
-                               child: TextFormField(
-                                 autofocus: false,
-                                 controller: _applicationController,
-                                 decoration: const InputDecoration(
-                                   isDense: true,
+                                          contentPadding: EdgeInsets.fromLTRB(
+                                              0.0, 10.0, 20.0, 10.0),
+                                          focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: ColorPalette.textGrey),
+                                            //  when the TextFormField in unfocused
+                                          ),
+                                          // hintStyle: TextStyle(fontSize: 14),
+                                          enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: ColorPalette.textGrey),
+                                            //  when the TextFormField in unfocused
+                                          ),
+                                          border: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: ColorPalette.textGrey),
+                                          ),
+                                          //labelStyle: EWTWidget.fieldLabelTextStyle,
+                                        ),
+                                        // inputFormatters: [
+                                        //   FilteringTextInputFormatter.deny(RegExp(
+                                        //       r'!@#<>?":_``~;[]\|=-+)(*&^%1234567890')),
+                                        // ],
+                                        keyboardType: TextInputType.text,
+                                        style: EWTWidget.fieldValueTextStyle,
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return 'The field is mandatory';
+                                          } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                                              .hasMatch(value)) {
+                                            return 'Enter valid id';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Application Number:',
+                                    style: EWTWidget.subHeadingTextStyle,
+                                  ),
+                                  const SizedBox(
+                                    width: 33,
+                                  ),
+                                  Flexible(
+                                    child: Container(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                      child: TextFormField(
+                                        autofocus: false,
+                                        controller: _applicationController,
+                                        decoration: const InputDecoration(
+                                          isDense: true,
 
-                                   contentPadding:
-                                   EdgeInsets.fromLTRB(0.0, 10.0, 20.0, 10.0),
-                                   focusedBorder: UnderlineInputBorder(
-                                     borderSide:
-                                     BorderSide(color: ColorPalette.textGrey),
-                                     //  when the TextFormField in unfocused
-                                   ),
-                                   // hintStyle: TextStyle(fontSize: 14),
-                                   enabledBorder: UnderlineInputBorder(
-                                     borderSide:
-                                     BorderSide(color: ColorPalette.textGrey),
-                                     //  when the TextFormField in unfocused
-                                   ),
-                                   border: UnderlineInputBorder(
-                                     borderSide:
-                                     BorderSide(color: ColorPalette.textGrey),
-                                   ),
-                                   //labelStyle: EWTWidget.fieldLabelTextStyle,
-                                 ),
-                                 keyboardType: TextInputType.text,
-                                 style: EWTWidget.fieldValueTextStyle,
-                                 validator: (value) {
-                                   if (value!.isEmpty) {
-                                     return 'The field is mandatory';
-                                   } else if (!RegExp(r'^[a-zA-Z0-9]+$')
-                                       .hasMatch(value)) {
-                                     return 'Enter valid Number';
-                                   }
-                                   return null;
-                                 },
-                               ),
-                             ),
-                           ),
-                         ],
-                       ),
-                       Row(children: [
-                         Text(
-                           'Notes:',
-                           style: EWTWidget.subHeadingTextStyle,
-                         ),
-                         const SizedBox(
-                           width: 120,
-                         ),
-                         Flexible(
-                           child: TextFormField(
-                             autofocus: false,
-                             controller: _noteController,
-                             decoration: const InputDecoration(
-                               focusedBorder: UnderlineInputBorder(
-                                 borderSide:
-                                 BorderSide(color: ColorPalette.textGrey),
-                                 //  when the TextFormField in unfocused
-                               ),
-                               enabledBorder: UnderlineInputBorder(
-                                 borderSide:
-                                 BorderSide(color: ColorPalette.textGrey),
-                                 //  when the TextFormField in unfocused
-                               ),
-                               border: UnderlineInputBorder(
-                                 borderSide:
-                                 BorderSide(color: ColorPalette.textGrey),
-                               ),
-                               //labelStyle: EWTWidget.fieldLabelTextStyle,
-                             ),
-                             keyboardType: TextInputType.text,
-                             style: EWTWidget.fieldValueTextStyle,
-                             validator: (value) {
-                               if (value!.isEmpty) {
-                                 return 'The field is mandatory';
-                               }
-                               return null;
-                             },
-                           ),
-                         ),
-                       ]),
-                     ],
-                   ):Container(),
+                                          contentPadding: EdgeInsets.fromLTRB(
+                                              0.0, 10.0, 20.0, 10.0),
+                                          focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: ColorPalette.textGrey),
+                                            //  when the TextFormField in unfocused
+                                          ),
+                                          // hintStyle: TextStyle(fontSize: 14),
+                                          enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: ColorPalette.textGrey),
+                                            //  when the TextFormField in unfocused
+                                          ),
+                                          border: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: ColorPalette.textGrey),
+                                          ),
+                                          //labelStyle: EWTWidget.fieldLabelTextStyle,
+                                        ),
+                                        keyboardType: TextInputType.text,
+                                        style: EWTWidget.fieldValueTextStyle,
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return 'The field is mandatory';
+                                          } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                                              .hasMatch(value)) {
+                                            return 'Enter valid Number';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(children: [
+                                Text(
+                                  'Notes:',
+                                  style: EWTWidget.subHeadingTextStyle,
+                                ),
+                                const SizedBox(
+                                  width: 120,
+                                ),
+                                Flexible(
+                                  child: TextFormField(
+                                    autofocus: false,
+                                    controller: _noteController,
+                                    decoration: const InputDecoration(
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: ColorPalette.textGrey),
+                                        //  when the TextFormField in unfocused
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: ColorPalette.textGrey),
+                                        //  when the TextFormField in unfocused
+                                      ),
+                                      border: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: ColorPalette.textGrey),
+                                      ),
+                                      //labelStyle: EWTWidget.fieldLabelTextStyle,
+                                    ),
+                                    keyboardType: TextInputType.text,
+                                    style: EWTWidget.fieldValueTextStyle,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'The field is mandatory';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ]),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      width: 200,
+                                      height: 30,
+                                      padding: const EdgeInsets.all(8.0),
+                                      child:
+                                          // ignore: unnecessary_null_comparison
+                                          Hotelfile == null
+                                              ? const Text('Upload File')
+                                              : Text(
+                                              Hotelfile!.path,
+                                              textAlign: TextAlign.start,
+                                              style:
+                                                  const TextStyle(fontSize: 10),
+                                                ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          //To change to file picker
+                                          onPressed: () async {
+                                            final ImagePicker _picker =
+                                            ImagePicker(); //added type ImagePicker
+                                            var image = await _picker.getImage(
+                                                source: ImageSource.camera);
+                                            // CroppedFile? croppedFile =
+                                            // await ImageCropper().cropImage(
+                                            //   sourcePath: image!.path,
+                                            // );
+                                            File compressedFile =
+                                            await FlutterNativeImage.compressImage(
+                                              image!.path,
+                                              quality: 50,
+                                            );
+
+                                            if (compressedFile != null) {
+                                              setState(() {
+                                                Hotelfile = File(compressedFile.path);
+                                                uploadImage(Hotelfile!.path);
+                                              });
+                                            } else {
+                                              /*setState(() {
+                                  isLoading = false;
+                                });*/
+                                            }
+                                          },
+                                          icon: const Icon(
+                                            Icons.camera_alt,
+                                            color: ColorPalette.textGrey,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          //To change to file picker
+                                          onPressed: () async {
+                                            FilePickerResult? result =
+                                                await FilePicker.platform
+                                                    .pickFiles();
+                                            var compressedFile =
+                                                (await FlutterImageCompress
+                                                    .compressWithFile(result!
+                                                        .files.single.path!));
+                                            if (result != null) {
+                                              setState(() {
+                                                Hotelfile =
+                                                    File(result.files.single.path!);
+                                                uploadImage(Hotelfile!.path);
+                                              });
+                                            } else {}
+                                          },
+                                          icon: const Icon(
+                                            Icons.attach_file,
+                                            color: ColorPalette.textGrey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
                     const SizedBox(
                       height: 20,
                     ),
@@ -974,11 +1129,12 @@ class _CitizenDetailsState extends State<CitizenDetails> {
                                   setState(() {
                                     isLoactionUpdate = true;
                                   });
-                                  _switchValue == true ?
-                                  update(
-                                      _transectionController.text,
-                                      _applicationController.text,
-                                      _noteController.text):checkboxUpdate();
+                                  _switchValue == true
+                                      ? update(
+                                          _transectionController.text,
+                                          _applicationController.text,
+                                          _noteController.text)
+                                      : checkboxUpdate();
                                 } else {}
                               },
                               child: Padding(

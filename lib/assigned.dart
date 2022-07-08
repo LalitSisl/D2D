@@ -490,7 +490,7 @@ class _AssignedState extends State<Assigned>
                                           ),
                                           Flexible(
                                               child: Text(
-                                            '${data[index]['address']} ${data[index]['address2']} ${data[index]['address3']}',
+                                            '${data[index]['address']} ${data[index]['address2']} ${data[index]['address3']} ${data[index]['pincodeid']}',
                                             style: const TextStyle(
                                                 color: Color.fromARGB(
                                                     255, 12, 67, 112),
@@ -655,8 +655,37 @@ class _AssignedState extends State<Assigned>
                                                   data[index]['status_id'] ==
                                                       "12") {
                                                 var id = data[index]["id"];
+                                                AlertDialog alert = AlertDialog(
+                                                  title: const Text("Are You Sure?"),
+                                                  content: Text("You are about to start service ${data[index]["id"]} ${data[index]["appointmenttime"]}"),
+                                                  actions: [
+                                                    ElevatedButton(
+                                                style: ButtonStyle(
+                                                  backgroundColor: MaterialStateProperty.all(Colors.grey),
+                                                ),
 
-                                                started(id);
+                                                child: const Text("No"),
+                                                    onPressed: () {
+                                              Navigator.of(context).pop();
+                                              },
+                                              ),
+                                                    ElevatedButton(
+                                                      child: const Text("Yes"),
+                                                      onPressed: () {
+                                                        started(id);
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                    ),
+                                              ],
+                                                );
+
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return alert;
+                                                  },
+                                                );
+                                               // started(id);
                                               } else if (data[index]
                                                       ['status_id'] ==
                                                   "3") {

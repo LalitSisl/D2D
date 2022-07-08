@@ -32,6 +32,7 @@ class _CompletedState extends State<Completed> {
       lastDate: DateTime(2025),
     );
     if (selected != null && selected != selectedDate1) {
+      Completed();
       setState(() {
         selectedDate1 = selected;
         var inputFormat = DateFormat('yyyy-MM-dd');

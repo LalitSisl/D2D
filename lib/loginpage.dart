@@ -78,11 +78,11 @@ class _LoginPageState extends State<LoginPage> {
     checkbio();
   }
 
-  checkbio()async{
+  checkbio() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    if(sharedPreferences.getString("user_id") == null){
+    if (sharedPreferences.getString("user_id") == null) {
       print('ok');
-    }else{
+    } else {
       checkBiometric();
     }
   }
@@ -94,8 +94,8 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
     try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      //final result = await InternetAddress.lookup('https://www.google.com');
+      //if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         var body =
             jsonEncode(<String, String>{"email": user, "password": pass});
         var response = await http.post(Uri.parse("${API.LOGIN}"), body: body);
@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
             sharedPreferences.setString('name', data["name"]);
             sharedPreferences.setString('email', data["email"]);
             sharedPreferences.setString('mobile', data["mobile"]);
-           print(sharedPreferences.getString("name"));
+
 
             Fluttertoast.showToast(
                 msg: convertJson['success_msg'], gravity: ToastGravity.BOTTOM);
@@ -133,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
               msg: "Something went wrong, try again later",
               gravity: ToastGravity.BOTTOM);
         }
-      }
+     // }
     } on SocketException catch (_) {
       setState(() {
         isLoading = false;
@@ -172,8 +172,6 @@ class _LoginPageState extends State<LoginPage> {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-
-
                       const SizedBox(
                         height: 100,
                       ),
@@ -204,8 +202,8 @@ class _LoginPageState extends State<LoginPage> {
                         margin: const EdgeInsets.only(
                             left: Dimension.dp40, right: Dimension.dp40),
                         child: Form(
-
                           key: _formKey,
+                          autovalidateMode: AutovalidateMode.always,
                           child: Column(
                             children: [
                               TextFormField(
@@ -217,18 +215,21 @@ class _LoginPageState extends State<LoginPage> {
                                     border: OutlineInputBorder()),
                                 keyboardType: TextInputType.text,
                                 style: EWTWidget.fieldValueTextStyle,
-                                validator: (value){
-                                  String pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-
+                                validator: (value) {
+                                  String pattern =
+                                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                                  RegExp regex = RegExp(pattern);
                                   if (value!.isEmpty) {
-                                    return 'Email is required';
+                                    return 'Field is required';
+                                  }else if(!regex.hasMatch(value)){
+                                    return 'Enter valid Email';
                                   }
-                                    RegExp regex = RegExp(pattern);
-                                  if (!(regex.hasMatch(value)))
-                                    return "Invalid Email";
+                                  //   RegExp regex = RegExp(pattern);
+                                  // if (!(regex.hasMatch(value)))
+                                  //   return "Invalid Email";
                                   return null;
                                 },
-                                      ),
+                              ),
                               const SizedBox(
                                 height: Dimension.dp20,
                               ),
@@ -242,8 +243,8 @@ class _LoginPageState extends State<LoginPage> {
                                   suffixIcon: IconButton(
                                     icon: Icon(
                                       _isObscure
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
                                     ),
                                     onPressed: () {
                                       setState(() {
@@ -259,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
                                 style: EWTWidget.fieldValueTextStyle,
                                 validator: (value) {
                                   if (value!.isEmpty) {
-                                    return 'The field is mandatory';
+                                    return 'Password is required';
                                   }
                                   return null;
                                 },
@@ -271,41 +272,41 @@ class _LoginPageState extends State<LoginPage> {
                                 width: width,
                                 height: 40,
                                 decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(Dimension.dp8),
-                                    color:
-                                         const Color(0xFF2f5ba3),
+                                  borderRadius:
+                                      BorderRadius.circular(Dimension.dp8),
+                                  color: const Color(0xFF2f5ba3),
                                 ),
-                                child:
-                                isLoading
-                                    ?  const Center(
-                                  child: SizedBox(
-                                      height: 25,
-                                      width: 25,
-                                      child: CircularProgressIndicator(color: Colors.white,)),
-                                ):
-                                RawMaterialButton(
-                                  elevation: Dimension.dp00,
-                                  onPressed: () {
-
-                                    // Navigator.of(context).pushReplacement(
-                                    //     MaterialPageRoute(
-                                    //         builder: (BuildContext context) =>
-                                    //             HomePage()));
-                                    if (_formKey.currentState!.validate()) {
-                                      login(_userNameController.text,
-                                          _passwordController.text);
-                                    }
-                                  },
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.all(Dimension.dp7),
-                                    child: Text(
-                                      Constant.login,
-                                      style: EWTWidget.buttonTextStyle,
-                                    ),
-                                  ),
-                                ),
+                                child: isLoading
+                                    ? const Center(
+                                        child: SizedBox(
+                                            height: 25,
+                                            width: 25,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                            )),
+                                      )
+                                    : RawMaterialButton(
+                                        elevation: Dimension.dp00,
+                                        onPressed: () {
+                                          // Navigator.of(context).pushReplacement(
+                                          //     MaterialPageRoute(
+                                          //         builder: (BuildContext context) =>
+                                          //             HomePage()));
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            login(_userNameController.text,
+                                                _passwordController.text);
+                                          }
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(
+                                              Dimension.dp7),
+                                          child: Text(
+                                            Constant.login,
+                                            style: EWTWidget.buttonTextStyle,
+                                          ),
+                                        ),
+                                      ),
                               ),
                               const SizedBox(
                                 height: Dimension.dp10,

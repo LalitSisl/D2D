@@ -14,4 +14,6 @@ class API {
   static final String UPDATE_SUBMIT = BASE_URL + "sumbit_service_request";
 
   static final String USER_INFO = BASE_URL + "agentLocation";
+
+  static final String UPLOAD_IMAGE = BASE_URL + "upload_photo";
 }
