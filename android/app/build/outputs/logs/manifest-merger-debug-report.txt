@@ -5,6 +5,7 @@ INJECTED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/
 INJECTED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml:1:1-51:12
 INJECTED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml:1:1-51:12
 MERGED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml:1:1-51:12
+MERGED from [:platform_device_id] /Users/lalitsharma/StudioProjects/citizenservices/build/platform_device_id/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:geolocator_android] /Users/lalitsharma/StudioProjects/citizenservices/build/geolocator_android/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-17:12
 MERGED from [:file_picker] /Users/lalitsharma/StudioProjects/citizenservices/build/file_picker/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-17:12
 MERGED from [:local_auth] /Users/lalitsharma/StudioProjects/citizenservices/build/local_auth/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-11:12
@@ -15,6 +16,7 @@ MERGED from [:android_intent_plus] /Users/lalitsharma/StudioProjects/citizenserv
 MERGED from [:flutter_native_image] /Users/lalitsharma/StudioProjects/citizenservices/build/flutter_native_image/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:shared_preferences_android] /Users/lalitsharma/StudioProjects/citizenservices/build/shared_preferences_android/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:map_launcher] /Users/lalitsharma/StudioProjects/citizenservices/build/map_launcher/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-25:12
+MERGED from [:device_info] /Users/lalitsharma/StudioProjects/citizenservices/build/device_info/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:geocoding] /Users/lalitsharma/StudioProjects/citizenservices/build/geocoding/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:battery_info] /Users/lalitsharma/StudioProjects/citizenservices/build/battery_info/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:fluttertoast] /Users/lalitsharma/StudioProjects/citizenservices/build/fluttertoast/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
@@ -87,16 +89,6 @@ uses-permission#android.permission.ACCESS_FINE_LOCATION
 ADDED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml:5:5-79
 	android:name
 		ADDED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml:5:22-76
-uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-ADDED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml:6:5-81
-	android:name
-		ADDED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml:6:22-78
-uses-permission#android.permission.READ_EXTERNAL_STORAGE
-ADDED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml:7:5-80
-MERGED from [:file_picker] /Users/lalitsharma/StudioProjects/citizenservices/build/file_picker/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-80
-MERGED from [:file_picker] /Users/lalitsharma/StudioProjects/citizenservices/build/file_picker/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-80
-	android:name
-		ADDED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml:7:22-77
 uses-permission#android.permission.ACCESS_COARSE_LOCATION
 ADDED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml:8:5-81
 	android:name
@@ -183,6 +175,8 @@ uses-sdk
 INJECTED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml
 INJECTED from /Users/lalitsharma/StudioProjects/citizenservices/android/app/src/main/AndroidManifest.xml
+MERGED from [:platform_device_id] /Users/lalitsharma/StudioProjects/citizenservices/build/platform_device_id/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:platform_device_id] /Users/lalitsharma/StudioProjects/citizenservices/build/platform_device_id/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:geolocator_android] /Users/lalitsharma/StudioProjects/citizenservices/build/geolocator_android/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:geolocator_android] /Users/lalitsharma/StudioProjects/citizenservices/build/geolocator_android/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:file_picker] /Users/lalitsharma/StudioProjects/citizenservices/build/file_picker/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
@@ -203,6 +197,8 @@ MERGED from [:shared_preferences_android] /Users/lalitsharma/StudioProjects/citi
 MERGED from [:shared_preferences_android] /Users/lalitsharma/StudioProjects/citizenservices/build/shared_preferences_android/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:map_launcher] /Users/lalitsharma/StudioProjects/citizenservices/build/map_launcher/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:map_launcher] /Users/lalitsharma/StudioProjects/citizenservices/build/map_launcher/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:device_info] /Users/lalitsharma/StudioProjects/citizenservices/build/device_info/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:device_info] /Users/lalitsharma/StudioProjects/citizenservices/build/device_info/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:geocoding] /Users/lalitsharma/StudioProjects/citizenservices/build/geocoding/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:geocoding] /Users/lalitsharma/StudioProjects/citizenservices/build/geocoding/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:battery_info] /Users/lalitsharma/StudioProjects/citizenservices/build/battery_info/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
@@ -301,6 +297,10 @@ ADDED from [:geolocator_android] /Users/lalitsharma/StudioProjects/citizenservic
 		ADDED from [:geolocator_android] /Users/lalitsharma/StudioProjects/citizenservices/build/geolocator_android/intermediates/library_manifest/debug/AndroidManifest.xml:14:13-53
 	android:name
 		ADDED from [:geolocator_android] /Users/lalitsharma/StudioProjects/citizenservices/build/geolocator_android/intermediates/library_manifest/debug/AndroidManifest.xml:11:13-77
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from [:file_picker] /Users/lalitsharma/StudioProjects/citizenservices/build/file_picker/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-80
+	android:name
+		ADDED from [:file_picker] /Users/lalitsharma/StudioProjects/citizenservices/build/file_picker/intermediates/library_manifest/debug/AndroidManifest.xml:7:22-77
 queries
 ADDED from [:file_picker] /Users/lalitsharma/StudioProjects/citizenservices/build/file_picker/intermediates/library_manifest/debug/AndroidManifest.xml:9:5-15:15
 MERGED from [:map_launcher] /Users/lalitsharma/StudioProjects/citizenservices/build/map_launcher/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-23:15

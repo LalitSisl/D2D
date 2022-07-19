@@ -50,11 +50,13 @@ class _CitizenDetailsState extends State<CitizenDetails> {
   var id;
   var email;
   var mobile;
+  var token;
   void method() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     id = _prefs.getString("user_id");
     email = _prefs.getString("email");
     mobile = _prefs.getString("mobile");
+    token = _prefs.getString("token");
     Detail();
   }
 
@@ -73,8 +75,11 @@ class _CitizenDetailsState extends State<CitizenDetails> {
           "mobile": "$mobile",
           "sr_id": "${widget.id}"
         });
+        Map<String, String> headers = {
+          "Authorization": "Bearer $token"
+        };
         var response =
-            await http.post(Uri.parse("${API.CITIZEN_DETAIL}"), body: body);
+            await http.post(Uri.parse("${API.CITIZEN_DETAIL}"), body: body,headers: headers);
         try {
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
@@ -138,8 +143,11 @@ class _CitizenDetailsState extends State<CitizenDetails> {
           "app_no": "$number",
           "note": "$note"
         });
+        Map<String, String> headers = {
+          "Authorization": "Bearer $token"
+        };
         var response =
-            await http.post(Uri.parse("${API.UPDATE_SUBMIT}"), body: body);
+            await http.post(Uri.parse("${API.UPDATE_SUBMIT}"), body: body,headers: headers);
         try {
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
@@ -189,7 +197,10 @@ class _CitizenDetailsState extends State<CitizenDetails> {
           "sr_id": "${widget.id}",
           "status": "11",
         });
-        var response = await http.post(Uri.parse("${API.UPDATE}"), body: body);
+        Map<String, String> headers = {
+          "Authorization": "Bearer $token"
+        };
+        var response = await http.post(Uri.parse("${API.UPDATE}"), body: body,headers: headers);
         try {
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
@@ -235,6 +246,7 @@ class _CitizenDetailsState extends State<CitizenDetails> {
             http.MultipartRequest('POST', Uri.parse("${API.UPLOAD_IMAGE}"));
         request.files
             .add(await http.MultipartFile.fromPath('image_name', file));
+        request.headers['token'] = token;
         request.fields['user_id'] = id;
         request.fields['mobile'] = '$mobile';
         request.fields['srid'] = '${widget.id}';

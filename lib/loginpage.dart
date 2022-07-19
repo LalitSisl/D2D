@@ -10,6 +10,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:http/http.dart' as http;
 import 'constants.dart';
 import 'homepage.dart';
+import 'package:platform_device_id/platform_device_id.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -76,15 +77,25 @@ class _LoginPageState extends State<LoginPage> {
     // TODO: implement initState
     super.initState();
     checkbio();
+    _getInfo();
   }
 
   checkbio() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     if (sharedPreferences.getString("user_id") == null) {
-      print('ok');
     } else {
       checkBiometric();
     }
+  }
+
+String? device_id;
+  void _getInfo() async {
+
+    String? result = await PlatformDeviceId.getDeviceId;
+    setState(() {
+      device_id = result;
+      print('id $device_id');
+    });
   }
 
   var zoneid = [];
@@ -96,44 +107,51 @@ class _LoginPageState extends State<LoginPage> {
     try {
       //final result = await InternetAddress.lookup('https://www.google.com');
       //if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        var body =
-            jsonEncode(<String, String>{"email": user, "password": pass});
-        var response = await http.post(Uri.parse("${API.LOGIN}"), body: body);
-        try {
-          var convertJson = jsonDecode(response.body);
-          if (convertJson["status"]) {
-            var data = convertJson['data'];
-            sharedPreferences.setString('user_id', data["user_id"]);
-            sharedPreferences.setString('name', data["name"]);
-            sharedPreferences.setString('email', data["email"]);
-            sharedPreferences.setString('mobile', data["mobile"]);
+      var body = jsonEncode(<String, String>{
+        "email": user,
+        "password": pass,
+        "device_id": device_id!
+      });
+      var response = await http.post(Uri.parse("${API.LOGIN}"), body: body);
+      print('res ?$response');
+      try {
+        var convertJson = jsonDecode(response.body);
+        if (convertJson["status"]) {
 
+          var data = convertJson['data'];
+          print(data);
+          sharedPreferences.setString('user_id', data["user_id"]);
+          sharedPreferences.setString('name', data["name"]);
+          sharedPreferences.setString('email', data["email"]);
+          sharedPreferences.setString('mobile', data["mobile"]);
+          sharedPreferences.setString('token', data["token"]);
+          print(sharedPreferences.getString('token'));
 
-            Fluttertoast.showToast(
-                msg: convertJson['success_msg'], gravity: ToastGravity.BOTTOM);
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (BuildContext context) => HomePage(id: "check")));
+          Fluttertoast.showToast(
+              msg: convertJson['success_msg'], gravity: ToastGravity.BOTTOM);
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (BuildContext context) => HomePage(id: "check")));
 
-            setState(() {
-              isLoading = false;
-            });
-          } else {
-            setState(() {
-              isLoading = false;
-            });
-            Fluttertoast.showToast(
-                msg: convertJson['error_msg'], gravity: ToastGravity.BOTTOM);
-          }
-        } catch (e) {
-          print(e.toString());
+          setState(() {
+            isLoading = false;
+          });
+        } else {
           setState(() {
             isLoading = false;
           });
           Fluttertoast.showToast(
-              msg: "Something went wrong, try again later",
-              gravity: ToastGravity.BOTTOM);
+              msg: convertJson['error_msg'], gravity: ToastGravity.BOTTOM);
         }
-     // }
+      } catch (e) {
+        print(e.toString());
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(
+            msg: "Something went wrong, try again later",
+            gravity: ToastGravity.BOTTOM);
+      }
+      // }
     } on SocketException catch (_) {
       setState(() {
         isLoading = false;
@@ -221,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
                                   RegExp regex = RegExp(pattern);
                                   if (value!.isEmpty) {
                                     return 'Field is required';
-                                  }else if(!regex.hasMatch(value)){
+                                  } else if (!regex.hasMatch(value)) {
                                     return 'Enter valid Email';
                                   }
                                   //   RegExp regex = RegExp(pattern);

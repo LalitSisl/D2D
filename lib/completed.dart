@@ -98,6 +98,7 @@ class _CompletedState extends State<Completed> {
   var id;
   var email;
   var mobile;
+  var token;
   void method() async {
     setState(() {
       isLoading = true;
@@ -106,6 +107,7 @@ class _CompletedState extends State<Completed> {
     id = _prefs.getString("user_id");
     email = _prefs.getString("email");
     mobile = _prefs.getString("mobile");
+    token = _prefs.getString("token");
     Completed();
   }
 
@@ -128,8 +130,11 @@ class _CompletedState extends State<Completed> {
           "from": "$startDate",
           "to": "$endDate"
         });
+        Map<String, String> headers = {
+          "Authorization": "Bearer $token"
+        };
         var response =
-            await http.post(Uri.parse("${API.COMPLETED}"), body: body);
+            await http.post(Uri.parse("${API.COMPLETED}"), body: body, headers: headers);
         try {
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {

@@ -38,8 +38,8 @@ class _AssignedState extends State<Assigned>
   final TimeController controller = Get.put(TimeController());
   final _formKey = GlobalKey<FormState>();
   //final _controller = TextEditingController();
-  List<TextEditingController>? _controllers = [];
-  List<String> _playerList = [];
+  //List<TextEditingController>? _controllers = [];
+  //List<String> _playerList = [];
   int selectedTabIndex = 0;
   bool showField = false;
 
@@ -55,6 +55,7 @@ class _AssignedState extends State<Assigned>
   var btnText;
   GeoCode geoCode = GeoCode();
   Timer? timer;
+  var token;
   @override
   void initState() {
     // TODO: implement initState
@@ -69,6 +70,7 @@ class _AssignedState extends State<Assigned>
     id = _prefs.getString("user_id");
     email = _prefs.getString("email");
     mobile = _prefs.getString("mobile");
+    token = _prefs.getString("token");
     bettery = (await BatteryInfoPlugin().androidBatteryInfo)?.batteryLevel;
 
     Assigned();
@@ -91,8 +93,12 @@ class _AssignedState extends State<Assigned>
           "email": "$email",
           "mobile": "$mobile",
         });
+        Map<String, String> headers = {
+          "Authorization": "Bearer $token"
+        };
+        print(token);
         var response =
-            await http.post(Uri.parse("${API.ASSIGNED}"), body: body);
+            await http.post(Uri.parse("${API.ASSIGNED}"), body: body,headers: headers);
         try {
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
@@ -133,7 +139,6 @@ class _AssignedState extends State<Assigned>
   }
 
   var bettery;
-
 
   getLocation() async {
     bool serviceEnabled;
@@ -181,8 +186,11 @@ class _AssignedState extends State<Assigned>
           "bt": "$bettery",
           "srid": "$srID"
         });
+        Map<String, String> headers = {
+          "Authorization": "Bearer $token"
+        };
         var response =
-            await http.post(Uri.parse("${API.USER_INFO}"), body: body);
+            await http.post(Uri.parse("${API.USER_INFO}"), body: body,headers: headers);
         try {
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
@@ -238,7 +246,10 @@ class _AssignedState extends State<Assigned>
           "sr_id": "$asignedid",
           "status": "3",
         });
-        var response = await http.post(Uri.parse("${API.UPDATE}"), body: body);
+        Map<String, String> headers = {
+          "Authorization": "Bearer $token"
+        };
+        var response = await http.post(Uri.parse("${API.UPDATE}"), body: body,headers: headers);
         try {
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
@@ -284,7 +295,10 @@ class _AssignedState extends State<Assigned>
           "sr_id": "$asignedid",
           "status": "4",
         });
-        var response = await http.post(Uri.parse("${API.UPDATE}"), body: body);
+        Map<String, String> headers = {
+          "Authorization": "Bearer $token"
+        };
+        var response = await http.post(Uri.parse("${API.UPDATE}"), body: body,headers: headers);
         try {
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
@@ -618,8 +632,8 @@ class _AssignedState extends State<Assigned>
                                                     BorderRadius.circular(8),
                                               ),
                                               child: const Image(
-                                                image:
-                                                    AssetImage(ImageAssets.map1),
+                                                image: AssetImage(
+                                                    ImageAssets.map1),
                                                 color: Colors.grey,
                                                 height: 24,
                                               ),
@@ -656,36 +670,43 @@ class _AssignedState extends State<Assigned>
                                                       "12") {
                                                 var id = data[index]["id"];
                                                 AlertDialog alert = AlertDialog(
-                                                  title: const Text("Are You Sure?"),
-                                                  content: Text("You are about to start service ${data[index]["id"]} ${data[index]["appointmenttime"]}"),
+                                                  title: const Text(
+                                                      "Are You Sure?"),
+                                                  content: Text(
+                                                      "You are about to start service ${data[index]["id"]} ${data[index]["appointmenttime"]}"),
                                                   actions: [
                                                     ElevatedButton(
-                                                style: ButtonStyle(
-                                                  backgroundColor: MaterialStateProperty.all(Colors.grey),
-                                                ),
-
-                                                child: const Text("No"),
-                                                    onPressed: () {
-                                              Navigator.of(context).pop();
-                                              },
-                                              ),
+                                                      style: ButtonStyle(
+                                                        backgroundColor:
+                                                            MaterialStateProperty
+                                                                .all(Colors
+                                                                    .grey),
+                                                      ),
+                                                      child: const Text("No"),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
                                                     ElevatedButton(
                                                       child: const Text("Yes"),
                                                       onPressed: () {
                                                         started(id);
-                                                        Navigator.of(context).pop();
+                                                        Navigator.of(context)
+                                                            .pop();
                                                       },
                                                     ),
-                                              ],
+                                                  ],
                                                 );
 
                                                 showDialog(
                                                   context: context,
-                                                  builder: (BuildContext context) {
+                                                  builder:
+                                                      (BuildContext context) {
                                                     return alert;
                                                   },
                                                 );
-                                               // started(id);
+                                                // started(id);
                                               } else if (data[index]
                                                       ['status_id'] ==
                                                   "3") {

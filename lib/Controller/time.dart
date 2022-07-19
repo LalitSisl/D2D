@@ -52,12 +52,14 @@ class TimeController extends GetxController {
   var mobile;
   var name;
   var bettery;
+  var token;
   void method() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     id = _prefs.getString("user_id");
     email = _prefs.getString("email");
     mobile = _prefs.getString("mobile");
     name = _prefs.getString("name");
+    token = _prefs.getString("token");
     bettery = (await BatteryInfoPlugin().androidBatteryInfo)?.batteryLevel;
   }
 
@@ -89,9 +91,11 @@ class TimeController extends GetxController {
           "mobile": "$mobile",
           "name": "$name"
         });
-        print(body);
+        Map<String, String> headers = {
+          "Authorization": "Bearer $token"
+        };
         var response =
-            await http.post(Uri.parse("${API.USER_INFO}"), body: body);
+            await http.post(Uri.parse("${API.USER_INFO}"), body: body,headers: headers);
         try {
           var convertJson = jsonDecode(response.body);
           if (convertJson["status"]) {
